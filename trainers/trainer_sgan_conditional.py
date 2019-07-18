@@ -11,7 +11,7 @@ from torch.optim.lr_scheduler import CosineAnnealingLR, StepLR
 from utils import set_lr, get_lr, generate_noise, plot_multiple_images, save_fig, save, get_sample_images_list
 
 class Trainer_SGAN_C():
-	def __init__(self, netD, netG, n_classes, device, train_dl, lr_D = 0.0002, lr_G = 0.0002, loss_interval = 50, image_interval = 50, snapshot_interval = None, save_img_dir = 'saved_images/', save_snapshot_dir = 'saved_snapshots'):
+	def __init__(self, netD, netG, n_classes, device, train_dl, lr_D = 0.0002, lr_G = 0.0002, beta1 = 0.5, loss_interval = 50, image_interval = 50, snapshot_interval = None, save_img_dir = 'saved_images/', save_snapshot_dir = 'saved_snapshots', resample = False):
 		self.netD = netD
 		self.netG = netG
 		self.n_classes = n_classes
@@ -20,9 +20,11 @@ class Trainer_SGAN_C():
 		self.lr_G = lr_G
 		self.train_iteration_per_epoch = len(self.train_dl)
 		self.device = device
+		self.resample = resample
+		self.beta1 = beta1
 
-		self.optimizerD = optim.Adam(self.netD.parameters(), lr = self.lr_D, betas = (beta1, 0.999))
-		self.optimizerG = optim.Adam(self.netG.parameters(), lr = self.lr_G, betas = (beta1, 0.999))
+		self.optimizerD = optim.Adam(self.netD.parameters(), lr = self.lr_D, betas = (self.beta1, 0.999))
+		self.optimizerG = optim.Adam(self.netG.parameters(), lr = self.lr_G, betas = (self.beta1, 0.999))
 
 		self.real_label = 1
 		self.fake_label = 0
