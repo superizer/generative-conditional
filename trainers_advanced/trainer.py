@@ -48,8 +48,12 @@ class Trainer():
 		self.fake_label = 0
 		self.nz = self.netG.nz
 
-		self.fixed_noise = generate_noise(self.n_classes, self.nz, self.device)
-		self.fixed_one_hot_labels = torch.diagflat(torch.ones(self.n_classes)).to(self.device)
+		self.fixed_noise = generate_noise(28, self.nz, self.device) #self.n_classes, self.nz, self.device)
+		a = np.array([0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3])
+		b = np.zeros((28, 4))
+		b[np.arange(28), a] = 1
+		self.fixed_one_hot_labels = torch.from_numpy(b).float().to(self.device)
+		#self.fixed_one_hot_labels = torch.diagflat(torch.ones(self.n_classes)).to(self.device)
 		self.loss_interval = loss_interval
 		self.image_interval = image_interval
 
@@ -145,7 +149,7 @@ class Trainer():
 				
 				if(i % self.image_interval == 0):
 					sample_images_list = get_sample_images_list('Conditional', (self.fixed_noise, self.fixed_one_hot_labels, self.n_classes, self.netG))
-					plot_fig = plot_multiple_images(sample_images_list, self.n_classes, 1)
+					plot_fig = plot_multiple_images(sample_images_list, self.n_classes, 7)
 					cur_file_name = os.path.join(self.save_img_dir, str(self.save_cnt)+' : '+str(epoch)+'-'+str(i)+'.jpg')
 					self.save_cnt += 1
 					save_fig(cur_file_name, plot_fig)

@@ -61,14 +61,18 @@ def generate_noise(bs, nz, device):
 	return noise
 
 def plot_multiple_images(images, h, w):
-	fig = plt.figure(figsize=(8, 8))
+	fig = plt.figure(figsize=(8, 4))
 	for i in range(1, h*w+1):
 		img = images[i-1]
 		fig.add_subplot(h, w, i)
 		if(img.shape[2] == 1):
 			img = img.reshape(img.shape[0], img.shape[1])
-		plt.imshow(img, cmap = 'gray')
-
+		#plt.axis('off')
+		#plt.subplots_adjust(hspace=0, wspace=0)
+		plt.axis('off')
+		plt.imshow(img, cmap = 'gray', aspect='auto')
+	#plt.axis('off')
+	plt.subplots_adjust(hspace=0, wspace=0)
 	plt.show()
 	return fig
 
@@ -97,7 +101,7 @@ def get_sample_images_list(mode, inputs):
 		with torch.no_grad():
 			sample_fake_images = netG(fixed_noise, fixed_one_hot_labels).detach().cpu().numpy()
 			sample_images_list = []
-			for j in range(n_classes):
+			for j in range(28): #(n_classes):
 				cur_img = (sample_fake_images[j] + 1) / 2.0
 				sample_images_list.append(cur_img.transpose(1, 2, 0))
 
